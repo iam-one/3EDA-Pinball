@@ -2,5 +2,6 @@
     "configuration": "cpu=atmega328",
     "board": "arduino:avr:nano",
     "port": "/dev/tty.Bluetooth-Incoming-Port",
-    "sketch": "sedu-pinball.ino"
+    "sketch": "sedu-pinball.ino",
+    "programmer": "avrisp"
 }
