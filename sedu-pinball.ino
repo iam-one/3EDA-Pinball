@@ -1,13 +1,17 @@
+#include <Servo.h>
+
 // declare default pin value
-const int l_servo = 6; // D3
-const int r_servo = 8; // D5
-const int cds_in = 19; // A0
-const int l_tact = 7; // D4
-const int r_tact = 9; // D6
+const int l_servo_out = 3; // D3
+const int r_servo_out = 5; // D5
+const int cds_in = A0; // A0
+const int l_tact = 4; // D4
+const int r_tact = 6; // D6
 
 // define seg pin value
-const byte pin_segs[8] = {14, 15, 20, 21, 22, 23, 24, 25}; // D11 (a), D12 (b), A1 (c), A2 (d), A3 (e), A4 (f), A5 (g), A6 (dp)
-const byte pin_segDigit[4] = {10, 11, 12, 13}; // D7 (d1), D8 (d2), D9 (d3), D10 (d4)
+// D11 (a), D12 (b), A1 (c), A2 (d), A3 (e), A4 (f), A5 (g), A6 (dp)
+const byte pin_segs[8] = {11, 12, A1, A2, A3, A4, A5, A6};
+// D7 (d1), D8 (d2), D9 (d3), D10 (d4)
+const byte pin_segDigit[4] = {7, 8, 9, 10};
 
 // define seg value
 const byte segNum[10][7] = {
@@ -23,18 +27,32 @@ const byte segNum[10][7] = {
    {1,1,1,1,0,1,1}  // 9
 };
 
-unsigned long currentTime=0;
+Servo l_servo;
+Servo r_servo;
+
+boolean is_ready = false;
+
+unsigned long segTime = 0;
+unsigned long l_Time = 0;
+unsigned long r_Time = 0;
+
+int l_angle = 0;
+int r_angle = 0;
+
 int d1 = 0;
 int d2 = 0;
 int d3 = 0;
 int d4 = 0;
 
+int cds = 0;
+
 void setup() { // setup
   pinMode(l_tact, INPUT_PULLUP);
   pinMode(r_tact, INPUT_PULLUP);
   pinMode(cds_in, INPUT_PULLUP);
-  pinMode(l_servo, OUTPUT);
-  pinMode(r_servo, OUTPUT);
+
+  l_servo.attach(l_servo_out);
+  r_servo.attach(r_servo_out);
 
   for(int i=0; i<8; i++){
     pinMode(pin_segs[i], OUTPUT);
@@ -49,17 +67,54 @@ void setup() { // setup
 }
 
 void loop() {
-  currentTime = millis()/10;
+  // game start with clicking right switch
+  if (digitalRead(r_tact) == LOW) is_ready = true;
 
-  d1 = currentTime%10;
-  d2 = (currentTime/10)%10;
-  d3 = (currentTime/100)%10;
-  d4 = (currentTime/1000)%10;
+  while(is_ready) {
+    // when ball in hole, time out
+    cds = analogRead(cds_in);
+    if (cds < 100) is_ready = false;
 
-  segOut(3,d1,0);
-  if(currentTime>=10) segOut(2,d2,0);
-  if(currentTime>=100) segOut(1,d3,0);
-  if(currentTime>=1000) segOut(0,d4,0);
+    // init left servo
+    if (digitalRead(l_tact) == LOW){
+      l_Time = millis();
+      l_angle = 90;
+    }
+    // init right servo
+    if (digitalRead(r_tact) == LOW){
+      r_Time = millis();
+      r_angle = 90;
+    }
+
+    // set left servo
+    if (millis() - l_Time < 500){
+      l_angle -= 6;
+    }
+
+    // set right servo
+    if (millis() - r_Time < 500){
+      r_angle += 6;
+    }
+
+    // move servo
+    l_servo.write(l_angle);
+    r_servo.write(r_angle);
+
+    // set Game Time
+    segTime = millis()/10;
+    d1 = segTime%10;
+    d2 = (segTime/10)%10;
+    d3 = (segTime/100)%10;
+    d4 = (segTime/1000)%10;
+
+    // show Game Time in Segment
+    segOut(3,d1,0);
+    if(segTime>=10) segOut(2,d2,0);
+    if(segTime>=100) segOut(1,d3,0);
+    if(segTime>=1000) segOut(0,d4,0);
+
+    delay(100);
+  }
 }
 
 void segClear(){ // segment clear

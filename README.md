@@ -1,15 +1,7 @@
-## Project
-
-### SEDU Pinball
-물리공학 동아리 SEDA 자연숲 과학교실 프로젝트  
-아두이노 개념과 활용에 대한 공학적 소양 증진을 목적으로 함.  
-
-## 설명 (Explanation)
-1. 
-
-## 회로도 (Circuits)
+### Circuits
 <img src="./public/Sedu_Pinball_Circuit_IMG.png">
 
+### Parts
 * Arduino NANO
 * SG90 x 2
 * CDS Photo Transistor
@@ -17,7 +9,7 @@
 * 7 segment - 4 digit
 * 9V batt.
 
-### 세부 사항 (Details)
+### Details
 ---
 * SG90 Pins - D3(L), D5(R) (PWM)
 * Tact Switch Pins - D4(L), D6(R)
