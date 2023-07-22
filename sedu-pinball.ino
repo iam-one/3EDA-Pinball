@@ -23,12 +23,18 @@ const byte segNum[10][7] = {
    {1,1,1,1,0,1,1}  // 9
 };
 
+unsigned long currentTime=0;
+int d1 = 0;
+int d2 = 0;
+int d3 = 0;
+int d4 = 0;
+
 void setup() { // setup
   pinMode(l_tact, INPUT_PULLUP);
   pinMode(r_tact, INPUT_PULLUP);
+  pinMode(cds_in, INPUT_PULLUP);
   pinMode(l_servo, OUTPUT);
   pinMode(r_servo, OUTPUT);
-  pinMode(cds_in, INPUT_PULLUP);
 
   for(int i=0; i<8; i++){
     pinMode(pin_segs[i], OUTPUT);
@@ -37,9 +43,23 @@ void setup() { // setup
     pinMode(pin_segDigit[j], OUTPUT);
     digitalWrite(pin_segDigit[j], HIGH);
   }
+
+  Serial.begin(9600);
+  Serial.println("Serial Init");
 }
 
 void loop() {
+  currentTime = millis()/10;
+
+  d1 = currentTime%10;
+  d2 = (currentTime/10)%10;
+  d3 = (currentTime/100)%10;
+  d4 = (currentTime/1000)%10;
+
+  segOut(3,d1,0);
+  if(currentTime>=10) segOut(2,d2,0);
+  if(currentTime>=100) segOut(1,d3,0);
+  if(currentTime>=1000) segOut(0,d4,0);
 }
 
 void segClear(){ // segment clear
