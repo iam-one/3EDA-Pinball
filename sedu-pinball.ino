@@ -8,9 +8,7 @@ const int l_tact = 4; // D4
 const int r_tact = 6; // D6
 
 // define seg pin value
-// D11 (a), D12 (b), A1 (c), A2 (d), A3 (e), A4 (f), A5 (g), A6 (dp)
 const byte pin_segs[8] = {11, 12, A1, A2, A3, A4, A5, A6};
-// D7 (d1), D8 (d2), D9 (d3), D10 (d4)
 const byte pin_segDigit[4] = {7, 8, 9, 10};
 
 // define seg value
@@ -46,7 +44,8 @@ int d4 = 0;
 
 int cds = 0;
 
-void setup() { // setup
+// setup
+void setup() {
   pinMode(l_tact, INPUT_PULLUP);
   pinMode(r_tact, INPUT_PULLUP);
   pinMode(cds_in, INPUT_PULLUP);
@@ -88,12 +87,12 @@ void loop() {
 
     // set left servo
     if (millis() - l_Time < 500){
-      l_angle -= 6;
+      l_angle -= 7;
     }
 
     // set right servo
     if (millis() - r_Time < 500){
-      r_angle += 6;
+      r_angle += 7;
     }
 
     // move servo
@@ -113,17 +112,24 @@ void loop() {
     if(segTime>=100) segOut(1,d3,0);
     if(segTime>=1000) segOut(0,d4,0);
 
-    delay(100);
+    delay(100); // delay to move servo
   }
+  // init segment
+  segOut(3,0,0);
+  if(segTime>=10) segOut(2,0,0);
+  if(segTime>=100) segOut(1,0,0);
+  if(segTime>=1000) segOut(0,0,0);
 }
 
-void segClear(){ // segment clear
+// segment clear
+void segClear(){
   for(int i=0;i<8;i++){
     digitalWrite(pin_segs[i], LOW);
   }
 }
 
-void segOut(int d, int value, int dp){ // segment output
+// segment output
+void segOut(int d, int value, int dp){
   segClear();
   digitalWrite(pin_segDigit[d], LOW);
   for(int i=0;i<7;i++){
