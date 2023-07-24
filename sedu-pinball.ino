@@ -32,6 +32,8 @@ Servo r_servo;
 
 boolean is_ready = false;
 
+extern volatile unsigned long timer0_millis;
+
 unsigned long segTime = 0;
 unsigned long l_Time = 0;
 unsigned long r_Time = 0;
@@ -72,9 +74,11 @@ void loop() {
   if (digitalRead(r_tact) == LOW) is_ready = true;
 
   while(is_ready) {
+    Serial.println("in while");
     // when ball in hole, time out
     cds = analogRead(cds_in);
-    if (cds < 100) is_ready = false;
+    Serial.println(cds);
+    if (cds > 160) is_ready = false;
 
     // init left servo
     if (digitalRead(l_tact) == LOW){
@@ -88,24 +92,24 @@ void loop() {
     }
 
     // set left servo
-    if (millis() - l_Time < 500){
-      l_angle -= SERVO_SPEED;
-    }
-    if (millis() - l_Time >= 500 && millis() - l_Time < 1000){
+    if (millis() - l_Time < 250){
       l_angle += SERVO_SPEED;
     }
-    if (millis() - l_Time >= 1000){
+    if (millis() - l_Time >= 250 && millis() - l_Time < 500){
+      l_angle -= SERVO_SPEED;
+    }
+    if (millis() - l_Time >= 500){
       l_angle = 90;
     }
 
     // set right servo
-    if (millis() - r_Time < 500){
-      r_angle += SERVO_SPEED;
-    }
-    if (millis() - r_Time >= 500 && millis() - r_Time < 1000){
+    if (millis() - r_Time < 250){
       r_angle -= SERVO_SPEED;
     }
-    if (millis() - r_Time >= 1000){
+    if (millis() - r_Time >= 250 && millis() - r_Time < 500){
+      r_angle += SERVO_SPEED;
+    }
+    if (millis() - r_Time >= 500){
       r_angle = 90;
     }
 
@@ -125,9 +129,8 @@ void loop() {
     if(segTime>=10) segOut(2,d2,0);
     if(segTime>=100) segOut(1,d3,0);
     if(segTime>=1000) segOut(0,d4,0);
-
-    delay(100); // delay to move servo
   }
+  timer0_millis = 0;
   // init segment
   segOut(3,0,0);
   if(segTime>=10) segOut(2,0,0);
