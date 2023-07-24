@@ -1,5 +1,7 @@
 #include <Servo.h>
 
+#define SERVO_SPEED 7
+
 // declare default pin value
 const int l_servo_out = 3; // D3
 const int r_servo_out = 5; // D5
@@ -87,12 +89,24 @@ void loop() {
 
     // set left servo
     if (millis() - l_Time < 500){
-      l_angle -= 7;
+      l_angle -= SERVO_SPEED;
+    }
+    if (millis() - l_Time >= 500 && millis() - l_Time < 1000){
+      l_angle += SERVO_SPEED;
+    }
+    if (millis() - l_Time >= 1000){
+      l_angle = 90;
     }
 
     // set right servo
     if (millis() - r_Time < 500){
-      r_angle += 7;
+      r_angle += SERVO_SPEED;
+    }
+    if (millis() - r_Time >= 500 && millis() - r_Time < 1000){
+      r_angle -= SERVO_SPEED;
+    }
+    if (millis() - r_Time >= 1000){
+      r_angle = 90;
     }
 
     // move servo
