@@ -1,3 +1,6 @@
+### Skeches
+<img src="./public/Sedu_Pinball_Sketch.jpeg">
+
 ### Circuits
 <img src="./public/Sedu_Pinball_Circuit_IMG.png">
 
